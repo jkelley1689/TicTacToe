@@ -1,0 +1,163 @@
+import java.util.*;
+public class TicTacToe {
+	
+
+	public static void main(String[] args) {
+		boolean winner = false;
+		char[][] board = intBoard();
+		printBoard(board);
+		
+		while(winner == false) {
+			if(playerOne(board) == true) {
+				winner = true;
+				break;
+			}
+			printBoard(board);
+			if(playerTwo(board) == true) {
+				winner = true;
+				break;
+				}
+			printBoard(board);
+		}	
+	}
+	
+	public static char[][] intBoard() {  //method to initialize playing board to '?'
+		char[][] board = new char[3][3];
+		for(int i = 0;i<3;i++) {
+			for(int j = 0;j<3;j++)
+				board[i][j] = '?';
+		}
+		return board;
+	}
+	
+	public static void printBoard(char[][] board) { //prints the current playing board
+		for(int i = 0;i<3;i++){
+            System.out.print(board[i][0]);
+            for(int j = 1;j<3;j++){
+                System.out.print(board[i][j]);
+            }
+            System.out.println();     
+            }
+		}
+	public static boolean playerOne(char[][] board) { //method allows player one to choose their move
+		int row,col;
+		boolean winner = false;
+		Scanner console = new Scanner(System.in);
+		System.out.println("Player 1, pick you row and col");
+		row = console.nextInt() - 1;
+		col = console.nextInt() - 1;
+		if(row >= 3 || col >= 3) { //checks to see if choice is within the array limits
+			System.out.println("Invalid choice, choose again");
+			playerOne(board);
+		}
+		else {
+			if(checkSpace(board,row,col) != true) { //checks to see if the position has already been taken 
+				System.out.println("That space is already taken, choose again");
+				playerOne(board);
+			}
+			else {
+				setToX(board,row,col); //sets the chosen position to 'X'
+				if(checkforWin(board,row,col) == true) { //checks for a win
+					winner = true;
+					System.out.println("Congrats player one!!");
+					printBoard(board);
+				}
+			}
+		}
+		
+		return winner;
+	}
+	//method is the same as playerOne() method but is set up for player 2 and 'O'
+	public static boolean playerTwo(char[][] board) {
+		int row,col;
+		boolean winner = false;
+		Scanner console = new Scanner(System.in);
+		System.out.println("Player 2, pick you row and col");
+		row = console.nextInt() - 1;
+		col = console.nextInt() - 1;
+		
+		if(row >= 3 || col >= 3) {
+			System.out.println("Invalid choice, choose again");
+			playerTwo(board);
+		}
+		else {
+			if(checkSpace(board,row,col) != true) {
+				System.out.println("That space is already taken, choose again");
+				playerTwo(board);
+			}
+			else {
+				setToO(board,row,col);
+				if(checkforWin(board,row,col) == true) {
+					winner = true;
+					System.out.println("Congrats player two!!");
+					printBoard(board);
+				}
+			}
+		}
+		
+		return winner; 
+	}
+	//method used to determine if the space is taken, if the space is blank the method returns true
+	public static boolean checkSpace(char[][] board,int row, int col) {
+		return board[row][col] == '?';	
+	}
+	
+	public static void setToX(char[][] board,int row,int col) { //sets player 1 to 'X'
+		board[row][col] = 'X';
+	}
+	
+	public static void setToO(char[][] board,int row, int col) { //sets player 2 to 'O'
+		board[row][col] = 'O';
+	}
+	
+	//uses a series of methods to check for a winning combination
+	public static boolean checkforWin(char[][] board,int row,int col) { 
+		return checkRowForWin(board,row) == true || checkColForWin(board,col) == true || checkDiagForWin(board,row,col) == true;	
+	}
+	
+	//Checks only the current chosen row for a win
+	public static boolean checkRowForWin(char[][] board, int row) {
+		boolean result = false;
+		int countX = 0;
+		int countO = 0;
+		
+		for(int i = 0;i<3;i++) { //checks every position in the row
+			if(board[row][i] == '?') //if any position is still a '?' within that row the methods breaks 
+				break;// no winner is discovered yet
+			else if(board[row][i] == 'X') //checks every position in the row for 'X'
+				countX++; //every X that is discovered adds to the count
+			else
+				countO++; //if the position is not an '?' or 'X' we add to the 'O' count
+		}
+		if(countX == 3 || countO == 3) //if either 'X' or 'O' count reaches 3 we know we have a winner
+			result = true;
+		return result;
+	}
+	
+	//this method is exactly the same as checkRowForWin except it checks the current column for a win
+	public static boolean checkColForWin(char[][] board,int col) {
+		boolean result = false;
+		int countX = 0;
+		int countO = 0;
+		
+		for(int i = 0;i<3;i++) {
+			if(board[i][col] == '?') 
+				break;
+			else if(board[i][col] == 'X')
+				countX++;
+			else
+				countO++;
+		}
+		if(countX == 3 || countO == 3)
+			result = true;
+		return result;
+	}
+	
+	public static boolean checkDiagForWin(char[][] board,int row,int col) { //method that checks the diagonals for a winning combination 
+			return (checkCharacters(board[0][0],board[1][1],board[2][2]) ==  true) ||(checkCharacters(board[0][2],board[1][1],board[2][0]) == true );	
+	}
+	
+	public static boolean checkCharacters(char c1, char c2, char c3) { //returns true if there are three of the same characters in a row.
+		return ((c1 != '?') && (c1 == c2) && (c2 == c3));
+	}
+}
